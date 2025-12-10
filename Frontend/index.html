@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ACU Dashboard</title>
+  <link rel="stylesheet" href="./Style.css"/>
+</head>
+<body>
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-dot"></div>
+        <div class="logo-text">
+          <div class="logo-title">ACU Dashboard</div>
+          <div class="logo-sub">Serial / TCP Mikrotik</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button class="nav-item active" data-page="dashboard">📡 Dashboard</button>
+        <button class="nav-item" data-page="logs">🧾 Log Console</button>
+
+        <div class="nav-section">Features</div>
+        <button class="nav-item" data-page="satellite">🛰️ Satellite</button>
+        <button class="nav-item" data-page="local-location">📍 Local Location</button>
+        <button class="nav-item" data-page="manual">🕹️ Manual</button>
+        <button class="nav-item" data-page="lo-gain">📶 LO & Gain</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <label class="switch">
+          <input id="toggleTheme" type="checkbox">
+          <span class="slider"></span>
+        </label>
+        <span class="theme-label">Light / Dark</span>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div class="connect-row">
+          <button id="btnRefreshPorts" class="btn ghost">Refresh Ports</button>
+
+          <select id="serialPortSelect" class="select">
+            <option value="">-- Serial Ports --</option>
+          </select>
+          <button id="btnConnectSerial" class="btn">Connect Serial</button>
+
+          <div class="tcp-box">
+            <label>TCP Target</label>
+            <input id="tcpTarget" type="text" placeholder="192.168.0.1:2217" value="192.168.0.1:2217">
+          </div>
+          <button id="btnConnectTcp" class="btn">Connect TCP</button>
+
+          <button id="btnDisconnect" class="btn danger">Disconnect</button>
+
+          <label class="toggle stream-toggle">
+            <input id="toggleStream" type="checkbox" checked />
+            <span>stream</span>
+          </label>
+        </div>
+
+        <div class="status-row">
+          <div class="status-pill disconnected" id="pillStatus">disconnected</div>
+          <div class="status-pill small" id="pillMode">mode: -</div>
+        </div>
+      </header>
+
+      <!-- PAGES -->
+      <main class="content">
+
+        <!-- DASHBOARD PAGE -->
+        <section class="page active" id="page-dashboard">
+          <div class="page-header">
+            <h1>Realtime Telemetry ($SHOW)</h1>
+            <p class="muted">Live data from ACU + command control</p>
+          </div>
+
+          <div class="dash-grid">
+
+            <!-- LEFT COLUMN: TELEMETRY -->
+            <div class="panel">
+              <div class="panel-header">
+                <h2>Telemetry</h2>
+              </div>
+
+              <div class="telemetry-grid">
+                <div class="metric-card"><div class="metric-label">Preset Azimuth (deg)</div><div class="metric-value" id="preset_azimuth">-</div></div>
+                <div class="metric-card"><div class="metric-label">Preset Pitch (deg)</div><div class="metric-value" id="preset_pitch">-</div></div>
+                <div class="metric-card"><div class="metric-label">Preset Polarization (deg)</div><div class="metric-value" id="preset_polarization">-</div></div>
+                <div class="metric-card"><div class="metric-label">Current Azimuth (deg)</div><div class="metric-value" id="current_azimuth">-</div></div>
+                <div class="metric-card"><div class="metric-label">Current Pitch (deg)</div><div class="metric-value" id="current_pitch">-</div></div>
+                <div class="metric-card"><div class="metric-label">Current Polarization (deg)</div><div class="metric-value" id="current_polarization">-</div></div>
+
+                <div class="metric-card"><div class="metric-label">Antenna Status</div><div class="metric-value" id="antenna_status">-</div></div>
+                <div class="metric-card"><div class="metric-label">Carrier Heading</div><div class="metric-value" id="carrier_heading">-</div></div>
+                <div class="metric-card"><div class="metric-label">Carrier Pitch</div><div class="metric-value" id="carrier_pitch">-</div></div>
+                <div class="metric-card"><div class="metric-label">Carrier Roll</div><div class="metric-value" id="carrier_roll">-</div></div>
+
+                <div class="metric-card"><div class="metric-label">Longitude</div><div class="metric-value" id="longitude">-</div></div>
+                <div class="metric-card"><div class="metric-label">Latitude</div><div class="metric-value" id="latitude">-</div></div>
+                <div class="metric-card"><div class="metric-label">GPS Status</div><div class="metric-value" id="gps_status">-</div></div>
+
+                <div class="metric-card"><div class="metric-label">Limit Info</div><div class="metric-value" id="limit_info">-</div></div>
+                <div class="metric-card"><div class="metric-label">Alert Info</div><div class="metric-value" id="alert_info">-</div></div>
+
+                <div class="metric-card"><div class="metric-label">AGC Level</div><div class="metric-value" id="agc_level">-</div></div>
+                <div class="metric-card"><div class="metric-label">Az Pot</div><div class="metric-value" id="az_pot">-</div></div>
+                <div class="metric-card"><div class="metric-label">Pitch Pot</div><div class="metric-value" id="pitch_pot">-</div></div>
+
+                <div class="metric-card span-2"><div class="metric-label">Time</div><div class="metric-value small" id="time">-</div></div>
+                <div class="metric-card"><div class="metric-label">Checksum</div><div class="metric-value" id="checksum">-</div></div>
+              </div>
+            </div>
+
+            <!-- RIGHT COLUMN: COMMANDS -->
+            <div class="panel">
+              <div class="panel-header">
+                <h2>Commands</h2>
+              </div>
+
+              <h3 class="section-title">Quick Commands</h3>
+              <div class="cmd-grid">
+                <button class="btn cmd" data-cmd="reset">Reset</button>
+                <button class="btn cmd" data-cmd="search">Search (align star)</button>
+                <button class="btn cmd" data-cmd="stow">Stow (collection)</button>
+                <button class="btn cmd" data-cmd="stop">Stop</button>
+                <button class="btn cmd" data-cmd="get show">Get Show</button>
+              </div>
+
+              <div class="divider"></div>
+
+              <h3 class="section-title">Custom Command</h3>
+              <div class="form">
+                <label>Frame code</label>
+                <input id="customCode" type="text" placeholder="sat / place / dir / set beacon ..." />
+
+                <label>Data (comma separated)</label>
+                <input id="customData" type="text" placeholder="ex: 123,45,67" />
+
+                <div class="row">
+                  <label>Retries</label>
+                  <input id="customRetries" type="number" value="3" min="1" max="10"/>
+                  <label>Timeout (s)</label>
+                  <input id="customTimeout" type="number" step="0.1" value="0.5" min="0.1" max="10"/>
+                </div>
+
+                <button id="btnSendCustom" class="btn">Send</button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- LOG PAGE -->
+        <section class="page" id="page-logs">
+          <div class="page-header">
+            <h1>Log Console</h1>
+            <p class="muted">All TX/RX + WS stream output</p>
+          </div>
+
+          <div class="panel log-panel">
+            <div class="log-actions">
+              <button id="btnClearLog" class="btn ghost">Clear</button>
+              <button id="btnCopyLog" class="btn ghost">Copy</button>
+            </div>
+            <pre id="logConsole" class="log"></pre>
+          </div>
+        </section>
+
+        <!-- SATELLITE PAGE -->
+        <section class="page" id="page-satellite">
+          <div class="page-header">
+            <h1>Satellite</h1>
+            <p class="muted">Live read + update satellite parameters</p>
+          </div>
+
+          <div class="feature-grid">
+
+            <div class="panel">
+              <div class="panel-header"><h2>Live Satellite Read</h2></div>
+              <pre id="satRaw" class="codebox">Waiting WS...</pre>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header"><h2>Satellite Settings</h2></div>
+
+              <form id="satForm" class="form">
+                <label>Name</label>
+                <input id="sat_name" type="text" placeholder="SAT-1" required />
+
+                <label>Center Freq (MHz)</label>
+                <input id="sat_center_freq" type="number" step="0.01" required />
+
+                <label>Carrier Freq (MHz)</label>
+                <input id="sat_carrier_freq" type="number" step="0.01" value="0" />
+
+                <label>Carrier Rate (ksps)</label>
+                <input id="sat_carrier_rate" type="number" step="0.01" value="0" />
+
+                <label>Satellite Longitude (deg)</label>
+                <input id="sat_longitude" type="number" step="0.01" value="0" />
+
+                <!-- ✅ FIXED per doc -->
+                <label>Pol Mode (0 = Horizontal, 1 = Vertical)</label>
+                <input id="sat_pol_mode" type="number" min="0" max="1" value="0" />
+
+                <label>Lock Threshold</label>
+                <input id="sat_lock_threshold" type="number" step="0.01" value="5.0" />
+
+                <button class="btn" type="submit">Apply Satellite</button>
+              </form>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- LOCAL LOCATION PAGE -->
+        <section class="page" id="page-local-location">
+          <div class="page-header">
+            <h1>Local Location</h1>
+            <p class="muted">Live read + update place / GPS settings</p>
+          </div>
+
+          <div class="feature-grid">
+
+            <div class="panel">
+              <div class="panel-header"><h2>Live Place Read</h2></div>
+              <pre id="placeRaw" class="codebox">Waiting WS...</pre>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header"><h2>Set Local Location</h2></div>
+
+              <form id="placeForm" class="form">
+                <label>Longitude</label>
+                <input id="place_longitude" type="number" step="0.000001" required />
+
+                <label>Latitude</label>
+                <input id="place_latitude" type="number" step="0.000001" required />
+
+                <label>Heading (optional)</label>
+                <input id="place_heading" type="number" step="0.01" placeholder="blank = fill a space" />
+
+                <button class="btn" type="submit">Apply Location</button>
+              </form>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- MANUAL PAGE -->
+        <section class="page" id="page-manual">
+          <div class="page-header">
+            <h1>Manual Control</h1>
+            <p class="muted">Set position and/or speed via dirx</p>
+          </div>
+
+          <div class="feature-grid">
+
+            <div class="panel">
+              <div class="panel-header"><h2>Manual Dirx Command</h2></div>
+
+              <form id="manualForm" class="form">
+
+                <label>Sport Type</label>
+                <select id="manual_sport_type" class="select">
+                  <option value="a">a (azimuth)</option>
+                  <option value="e">e (elevation/pitch)</option>
+                  <option value="p">p (polarization)</option>
+                  <option value="l">l (all axes)</option>
+                </select>
+
+                <div class="divider"></div>
+
+                <label>Azimuth Target (deg)</label>
+                <input id="manual_az_target" type="number" step="0.01" placeholder="leave blank to omit" />
+
+                <label>Azimuth Speed (deg/s)</label>
+                <input id="manual_az_speed" type="number" step="0.01" placeholder="leave blank to omit" />
+
+                <label>Pitch Target (deg)</label>
+                <input id="manual_pitch_target" type="number" step="0.01" placeholder="leave blank to omit" />
+
+                <label>Pitch Speed (deg/s)</label>
+                <input id="manual_pitch_speed" type="number" step="0.01" placeholder="leave blank to omit" />
+
+                <label>Pol Target (deg)</label>
+                <input id="manual_pol_target" type="number" step="0.01" placeholder="leave blank to omit" />
+
+                <label>Pol Speed (deg/s)</label>
+                <input id="manual_pol_speed" type="number" step="0.01" placeholder="leave blank to omit" />
+
+                <button class="btn" type="submit">Send Dirx</button>
+
+                <div class="divider"></div>
+
+                <h3 class="section-title">Speed-Only Manual Mode</h3>
+
+                <label>Direction Code</label>
+                <select id="speed_direction_code" class="select">
+                  <option value="L">L (Azimuth Left)</option>
+                  <option value="R">R (Azimuth Right)</option>
+                  <option value="U">U (Pitch Up)</option>
+                  <option value="D">D (Pitch Down)</option>
+                  <option value="CW">CW (Pol Clockwise)</option>
+                  <option value="CCW">CCW (Pol Counter-Clockwise)</option>
+                </select>
+
+                <label>Speed</label>
+                <input id="speed_value" type="number" step="0.01" placeholder="ex: 2.50" />
+
+                <button class="btn" type="button" id="btnSendSpeedOnly">Send Speed-Only</button>
+
+                <div class="divider"></div>
+
+                <div class="cmd-grid">
+                  <button class="btn danger" type="button" id="btnStopManual">STOP</button>
+                  <button class="btn cmd" type="button" id="btnResetManual">Antenna Reset</button>
+                  <button class="btn cmd" type="button" id="btnAlignStarManual">Align Star</button>
+                  <button class="btn cmd" type="button" id="btnStowManual">Stow Collection</button>
+                </div>
+
+              </form>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header"><h2>Tips</h2></div>
+              <ul class="muted-list">
+                <li>Blank fields are omitted (fill-a-space behavior).</li>
+                <li>Sport type decides which axes are meaningful.</li>
+                <li>Use STOP for immediate halt.</li>
+              </ul>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- LO & GAIN PAGE -->
+        <section class="page" id="page-lo-gain">
+          <div class="page-header">
+            <h1>LO & Gain</h1>
+            <p class="muted">Live read for beacon/DVB + set LO and gain</p>
+          </div>
+
+          <div class="feature-grid">
+
+            <div class="panel">
+              <div class="panel-header"><h2>Live LO Read</h2></div>
+              <pre id="loRaw" class="codebox">Waiting WS...</pre>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header"><h2>Set LO & Gain</h2></div>
+
+              <form id="loForm" class="form">
+                <label>Mode</label>
+                <select id="lo_mode" class="select">
+                  <option value="beacon">Beacon</option>
+                  <option value="dvb">DVB</option>
+                </select>
+
+                <label>LO (MHz)</label>
+                <input id="lo_mhz" type="number" step="1" required />
+
+                <label>Gain (dB)</label>
+                <input id="lo_gain" type="number" step="0.01" required />
+
+                <button class="btn" type="submit">Apply LO & Gain</button>
+              </form>
+            </div>
+
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
