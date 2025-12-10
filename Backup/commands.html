@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ACU Dashboard - Commands</title>
+  <link rel="stylesheet" href="./style.css"/>
+</head>
+<body>
+  <div class="layout">
+
+    <!-- SIDEBAR (same) -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="dot"></div>
+        <div class="brand-text">
+          <div class="title">ACU Dashboard</div>
+          <div class="subtitle">Serial / TCP Mikrotik</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a class="nav-item" href="./dashboard.html"><span class="nav-icon">📡</span><span class="nav-text">Dashboard</span></a>
+        <a class="nav-item active" href="./commands.html"><span class="nav-icon">🎛️</span><span class="nav-text">Commands</span></a>
+        <a class="nav-item" href="./log.html"><span class="nav-icon">🧾</span><span class="nav-text">Log Console</span></a>
+
+        <div class="nav-sep"></div>
+        <div class="nav-item disabled"><span class="nav-icon">🛰️</span><span class="nav-text">Satellite</span></div>
+        <div class="nav-item disabled"><span class="nav-icon">📍</span><span class="nav-text">Local Location</span></div>
+        <div class="nav-item disabled"><span class="nav-icon">🧭</span><span class="nav-text">Manual</span></div>
+        <div class="nav-item disabled"><span class="nav-icon">📶</span><span class="nav-text">LO & Gain</span></div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="btnTheme" class="btn ghost full">🌙 Dark Mode</button>
+        <div class="mini-status">
+          <div class="status-pill" id="pillStatus">disconnected</div>
+          <div class="status-pill small" id="pillMode">mode: -</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div class="top-actions">
+          <button id="btnRefreshPorts" class="btn ghost">Refresh Ports</button>
+
+          <select id="serialPortSelect" class="select">
+            <option value="">-- Serial Ports --</option>
+          </select>
+
+          <button id="btnConnectSerial" class="btn">Connect Serial</button>
+
+          <div class="tcp-box">
+            <label>TCP Target</label>
+            <input id="tcpTarget" type="text" value="192.168.0.1:2217">
+          </div>
+
+          <button id="btnConnectTcp" class="btn">Connect TCP</button>
+          <button id="btnDisconnect" class="btn danger">Disconnect</button>
+
+          <label class="toggle">
+            <input id="toggleStream" type="checkbox" checked />
+            <span>stream</span>
+          </label>
+        </div>
+      </header>
+
+      <main class="content">
+        <section class="section">
+          <div class="section-header">
+            <h2>Commands</h2>
+            <div class="section-sub">Quick & custom ACU commands</div>
+          </div>
+
+          <div class="panel-grid">
+            <div class="panel">
+              <h3>Quick Commands</h3>
+              <div class="cmd-grid">
+                <button class="btn cmd" data-cmd="reset">Reset</button>
+                <button class="btn cmd" data-cmd="search align star">Search (align star)</button>
+                <button class="btn cmd" data-cmd="stow collection">Stow (collection)</button>
+                <button class="btn cmd" data-cmd="stop">Stop</button>
+                <button class="btn cmd" data-cmd="get show">Get Show</button>
+              </div>
+            </div>
+
+            <div class="panel">
+              <h3>Custom Command</h3>
+              <div class="form">
+                <label>Frame code</label>
+                <input id="customCode" type="text" />
+
+                <label>Data (comma separated)</label>
+                <input id="customData" type="text" />
+
+                <div class="row">
+                  <label>Retries</label>
+                  <input id="customRetries" type="number" value="3" min="1" max="10"/>
+                  <label>Timeout (s)</label>
+                  <input id="customTimeout" type="number" step="0.1" value="0.5" min="0.1" max="10"/>
+                </div>
+
+                <button id="btnSendCustom" class="btn">Send</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- small log preview -->
+        <section class="section">
+          <div class="section-header">
+            <h2>Live Log Preview</h2>
+            <div class="section-sub">You can open full page in Log Console</div>
+          </div>
+          <pre id="logConsole" class="log" style="height:180px;"></pre>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

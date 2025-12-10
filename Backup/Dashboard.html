@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ACU Dashboard - Telemetry</title>
+  <link rel="stylesheet" href="./style.css"/>
+</head>
+<body>
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="dot"></div>
+        <div class="brand-text">
+          <div class="title">ACU Dashboard</div>
+          <div class="subtitle">Serial / TCP Mikrotik</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a class="nav-item active" href="./dashboard.html">
+          <span class="nav-icon">📡</span>
+          <span class="nav-text">Dashboard</span>
+        </a>
+        <a class="nav-item" href="./commands.html">
+          <span class="nav-icon">🎛️</span>
+          <span class="nav-text">Commands</span>
+        </a>
+        <a class="nav-item" href="./log.html">
+          <span class="nav-icon">🧾</span>
+          <span class="nav-text">Log Console</span>
+        </a>
+
+        <div class="nav-sep"></div>
+        <div class="nav-item disabled"><span class="nav-icon">🛰️</span><span class="nav-text">Satellite</span></div>
+        <div class="nav-item disabled"><span class="nav-icon">📍</span><span class="nav-text">Local Location</span></div>
+        <div class="nav-item disabled"><span class="nav-icon">🧭</span><span class="nav-text">Manual</span></div>
+        <div class="nav-item disabled"><span class="nav-icon">📶</span><span class="nav-text">LO & Gain</span></div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="btnTheme" class="btn ghost full">🌙 Dark Mode</button>
+
+        <div class="mini-status">
+          <div class="status-pill" id="pillStatus">disconnected</div>
+          <div class="status-pill small" id="pillMode">mode: -</div>
+        </div>
+
+        <div class="muted tiny">v1.1 pages</div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div class="top-actions">
+          <button id="btnRefreshPorts" class="btn ghost">Refresh Ports</button>
+
+          <select id="serialPortSelect" class="select">
+            <option value="">-- Serial Ports --</option>
+          </select>
+
+          <button id="btnConnectSerial" class="btn">Connect Serial</button>
+
+          <div class="tcp-box">
+            <label>TCP Target</label>
+            <input id="tcpTarget" type="text"
+                   placeholder="192.168.0.1:2217"
+                   value="192.168.0.1:2217">
+          </div>
+
+          <button id="btnConnectTcp" class="btn">Connect TCP</button>
+          <button id="btnDisconnect" class="btn danger">Disconnect</button>
+
+          <label class="toggle">
+            <input id="toggleStream" type="checkbox" checked />
+            <span>stream</span>
+          </label>
+        </div>
+      </header>
+
+      <main class="content">
+        <section class="section">
+          <div class="section-header">
+            <h2>Realtime Telemetry ($SHOW)</h2>
+            <div class="section-sub">Live data from ACU</div>
+          </div>
+
+          <div class="telemetry-grid">
+            <div class="metric-card"><div class="metric-label">Preset Azimuth (deg)</div><div class="metric-value" id="preset_azimuth">-</div></div>
+            <div class="metric-card"><div class="metric-label">Preset Pitch (deg)</div><div class="metric-value" id="preset_pitch">-</div></div>
+            <div class="metric-card"><div class="metric-label">Preset Polarization (deg)</div><div class="metric-value" id="preset_polarization">-</div></div>
+            <div class="metric-card"><div class="metric-label">Current Azimuth (deg)</div><div class="metric-value" id="current_azimuth">-</div></div>
+            <div class="metric-card"><div class="metric-label">Current Pitch (deg)</div><div class="metric-value" id="current_pitch">-</div></div>
+            <div class="metric-card"><div class="metric-label">Current Polarization (deg)</div><div class="metric-value" id="current_polarization">-</div></div>
+            <div class="metric-card"><div class="metric-label">Antenna Status (code)</div><div class="metric-value" id="antenna_status">-</div></div>
+            <div class="metric-card"><div class="metric-label">Carrier Heading (deg)</div><div class="metric-value" id="carrier_heading">-</div></div>
+            <div class="metric-card"><div class="metric-label">Carrier Pitch (deg)</div><div class="metric-value" id="carrier_pitch">-</div></div>
+            <div class="metric-card"><div class="metric-label">Carrier Roll (deg)</div><div class="metric-value" id="carrier_roll">-</div></div>
+            <div class="metric-card"><div class="metric-label">Longitude (deg)</div><div class="metric-value" id="longitude">-</div></div>
+            <div class="metric-card"><div class="metric-label">Latitude (deg)</div><div class="metric-value" id="latitude">-</div></div>
+            <div class="metric-card"><div class="metric-label">GPS Status</div><div class="metric-value" id="gps_status">-</div></div>
+            <div class="metric-card"><div class="metric-label">Limit Info</div><div class="metric-value" id="limit_info">-</div></div>
+            <div class="metric-card"><div class="metric-label">Alert Info</div><div class="metric-value" id="alert_info">-</div></div>
+            <div class="metric-card"><div class="metric-label">AGC Level (V)</div><div class="metric-value" id="agc_level">-</div></div>
+            <div class="metric-card"><div class="metric-label">Azimuth Pot</div><div class="metric-value" id="az_pot">-</div></div>
+            <div class="metric-card"><div class="metric-label">Pitch Pot</div><div class="metric-value" id="pitch_pot">-</div></div>
+            <div class="metric-card span-2"><div class="metric-label">Time</div><div class="metric-value small" id="time">-</div></div>
+            <div class="metric-card"><div class="metric-label">Checksum</div><div class="metric-value" id="checksum">-</div></div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

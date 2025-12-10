@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ACU Dashboard - Log Console</title>
+  <link rel="stylesheet" href="./style.css"/>
+</head>
+<body>
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="dot"></div>
+        <div class="brand-text">
+          <div class="title">ACU Dashboard</div>
+          <div class="subtitle">Serial / TCP Mikrotik</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a class="nav-item" href="./dashboard.html"><span class="nav-icon">📡</span><span class="nav-text">Dashboard</span></a>
+        <a class="nav-item" href="./commands.html"><span class="nav-icon">🎛️</span><span class="nav-text">Commands</span></a>
+        <a class="nav-item active" href="./log.html"><span class="nav-icon">🧾</span><span class="nav-text">Log Console</span></a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button id="btnTheme" class="btn ghost full">🌙 Dark Mode</button>
+        <div class="mini-status">
+          <div class="status-pill" id="pillStatus">disconnected</div>
+          <div class="status-pill small" id="pillMode">mode: -</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div class="top-actions">
+          <button id="btnRefreshPorts" class="btn ghost">Refresh Ports</button>
+
+          <select id="serialPortSelect" class="select">
+            <option value="">-- Serial Ports --</option>
+          </select>
+
+          <button id="btnConnectSerial" class="btn">Connect Serial</button>
+
+          <div class="tcp-box">
+            <label>TCP Target</label>
+            <input id="tcpTarget" type="text" value="192.168.0.1:2217">
+          </div>
+
+          <button id="btnConnectTcp" class="btn">Connect TCP</button>
+          <button id="btnDisconnect" class="btn danger">Disconnect</button>
+
+          <label class="toggle">
+            <input id="toggleStream" type="checkbox" checked />
+            <span>stream</span>
+          </label>
+        </div>
+      </header>
+
+      <main class="content">
+        <section class="section">
+          <div class="section-header">
+            <h2>Log Console</h2>
+            <div class="section-sub">TX / RX / WS stream</div>
+          </div>
+
+          <div class="log-toolbar">
+            <button id="btnClearLog" class="btn ghost">Clear</button>
+            <button id="btnCopyLog" class="btn ghost">Copy</button>
+          </div>
+
+          <pre id="logConsole" class="log"></pre>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
